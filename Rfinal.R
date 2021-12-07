@@ -64,8 +64,9 @@ pairs.panels(wine[c("quality","alcohol","sulphates","density","residual.sugar","
 ##########
 library(pROC)
 # data preprocessing
-train_data$level = as.factor(train_data$level)
-test_data$level= as.factor(test_data$level)
+train_data$level = as.numeric(train_data$level)
+test_data$level= as.numeric(test_data$level)
+
 ############################################
 library(e1071)
 model=svm(level~.,data=wine)                #SVR regression
@@ -75,7 +76,11 @@ summary(model)
 ##############kernel= radial basis###
 
 library(e1071)
-wine_svm<- svm(level ~ fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data=train_data, type='eps-regression',kernel='radial')
+wine_svm<- svm (level ~ fixed.acidity + volatile.acidity + citric.acid + residual.sugar + chlorides + free.sulfur.dioxide + total.sulfur.dioxide + density +  pH + sulphates + alcohol,
+                scale = FALSE,
+                data=train_data, 
+                type='eps-regression',
+                kernel='radial')
 #test
 pre_svm <- predict(wine_svm,newdata = test_data)
 obs_p_svm = data.frame(prob=pre_svm,obs=test_data$level)
@@ -149,16 +154,12 @@ accuracy
 
 ######################################################
 
-#svr.model <- svm(
-#fixed.acidity~ level, data =wine, 
-# type = "eps-regression",
- # kernel = "radial"
-#)
-#summary(svr.model)
+svr.model <- svm(fixed.acidity~ level, data =wine, type = "eps-regression",kernel = "radial")
+summary(svr.model)
 #library(ggplot2)
 #ggplot()+
- # geom_point(aes(wine$fixed.acidity,wine$level), color = "blue")+
-  #geom_line(aes(wine$level, predict(svr.model, wine)), color = "red")
+# geom_point(aes(wine$fixed.acidity,wine$level), color = "blue")+
+#geom_line(aes(wine$level, predict(svr.model, wine)), color = "red")
 
 #pred <- predict(svr.model, data.frame(level = 1))
 #pred
